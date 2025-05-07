@@ -43,14 +43,15 @@ const presentQuestions: Question[] =
             points: 100,
             question:
                 'What is this Cafe called? \n \
-                <img class="half-screen-img" src="https://lh3.googleusercontent.com/p/AF1QipNsmB0ugJeJxYVrBKpRkNkyiEa6cKLamFZ4r0M=s1360-w1360-h1020" alt="Flag">',
+                <img class="half-screen-img" src="https://lh3.googleusercontent.com/p/AF1QipNsmB0ugJeJxYVrBKpRkNkyiEa6cKLamFZ4r0M=s1360-w1360-h1020" alt="Cafe">',
             answer: 'Chaotic Good',
             answered: false
         },
         {
             points: 300,
-            question: 'What programming language is the below code?',
-            answer: 'Leonardo da Vinci',
+            question: 'What programming language is the below code? \n \
+                <img class="half-screen-img" src="/programming_language.png" alt="Code">',
+            answer: 'Javascript',
             answered: false
         },
         {

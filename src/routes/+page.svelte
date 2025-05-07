@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Question } from '$lib/index';
 	import { scale } from 'svelte/transition';
-
 	// make selectedQuestion a type of optional question
 
 	let selectedQuestion: Question | null | undefined = $state(null);
@@ -175,7 +174,7 @@
 
 	:global(.half-screen-img) {
 		/*you need global because this css needs to be seen in the static html*/
-		width: 50vw; /* 50% of the viewport width */
+		width: 30vw; /* 50% of the viewport width */
 		max-width: 100%; /* Prevents overflow on small screens */
 		height: auto; /* Maintains aspect ratio */
 		display: block; /* Removes inline spacing */
