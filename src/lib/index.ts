@@ -3,5 +3,6 @@ export type Question = {
     points: number;
     question: string;
     answer: string;    
-    answered: boolean; 
+    answered: boolean;
+    imgSrc?: string;
 };

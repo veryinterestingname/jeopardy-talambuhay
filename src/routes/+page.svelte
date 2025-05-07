@@ -5,7 +5,11 @@
 
 	let selectedQuestion: Question | null | undefined = $state(null);
 
-	let { data }: { data: { pastQuestions: Question[], presentQuestions: Question[], futureQuestions: Question[] } } = $props();
+	let {
+		data
+	}: {
+		data: { pastQuestions: Question[]; presentQuestions: Question[]; futureQuestions: Question[] };
+	} = $props();
 	let buzzed = $state(false);
 	let userAnswer = $state('');
 	let showAnswer = $state(false);
@@ -14,7 +18,7 @@
 	};
 	const pastQuestions = sortQuestions(data.pastQuestions);
 	const presentQuestions = sortQuestions(data.presentQuestions);
-    const futureQuestions = sortQuestions(data.futureQuestions);
+	const futureQuestions = sortQuestions(data.futureQuestions);
 	let categories = $state([
 		{
 			title: 'My Past',
@@ -65,7 +69,7 @@
 					class="question-card {question.answered ? 'answered' : ''}"
 					onclick={() => handleSelect(question)}
 				>
-					{#if question.answered}{:else}
+					{#if !question.answered}
 						${question.points}
 					{/if}
 				</div>
@@ -78,7 +82,10 @@
 	<div class="modal" transition:scale>
 		<div class="modal-content">
 			<div class="question">
-				{@html selectedQuestion.question}
+				{selectedQuestion.question}
+				{#if selectedQuestion.imgSrc}
+					<img class="half-screen-img" src={selectedQuestion.imgSrc} alt="question" />
+				{/if}
 			</div>
 
 			{#if !buzzed}
@@ -174,9 +181,9 @@
 
 	:global(.half-screen-img) {
 		/*you need global because this css needs to be seen in the static html*/
-		width: 30vw; /* 50% of the viewport width */
-		max-width: 100%; /* Prevents overflow on small screens */
+		max-width: 100%; /* Prevents overflow on small screens, 100% of the modal-content */
 		height: auto; /* Maintains aspect ratio */
+		max-height: 80vh;
 		display: block; /* Removes inline spacing */
 		object-fit: contain; /* Ensures the whole image is visible */
 	}
