@@ -2,16 +2,13 @@
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
+## Creating this project 
 ```bash
 # create a new project in the current directory
 npx sv create
 
 # create a new project in my-app
-npx sv create my-app
+npx sv create jeopardy-talambuhay
 ```
 
 ## Developing
@@ -36,3 +33,11 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
+## Deploy 
+
+We use a node server to run the app. on the terminal in your production server, run:
+
+```bash
+npm run start
+``` 

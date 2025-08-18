@@ -1,8 +1,16 @@
 <script lang="ts">
 	import type { Question } from '$lib/index';
 	import { scale } from 'svelte/transition';
-	// make selectedQuestion a type of optional question
+	import io from 'socket.io-client'
 
+	const socket = io()
+
+	socket.on('eventFromServer', (message: string) => {
+		console.log(message)
+	})
+
+
+	// make selectedQuestion a type of optional question
 	let selectedQuestion: Question | null | undefined = $state(null);
 
 	let {
