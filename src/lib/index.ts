@@ -6,3 +6,9 @@ export type Question = {
     answered: boolean;
     imgSrc?: string;
 };
+
+export type PlayerData = {
+    name: string;
+    socketId: string;
+    score: number;
+};

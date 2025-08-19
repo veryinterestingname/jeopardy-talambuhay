@@ -65,7 +65,17 @@ const presentQuestions: Question[] =
             answered: false
         }
     ];
-const futureQuestions: Question[] = [];
+const futureQuestions: Question[] = [
+            {
+            points: 100,
+            question:
+                'This country is home to the Dolomites, which are a mountain range that has historical \'via ferratas\', iron cables and rungs, to aid traversing the peaks?',
+            imgSrc:
+                "https://laguidalpina.it/cdn/shop/products/ferrata-marmolada-cresta-ovest-Cristiano-Gregnanin-Guida-Alpina-Certificata-Dolomiti-5.jpg?v=1738870778",
+            answer: 'Keith Haring',
+            answered: false
+        }
+];
 export function load() {
     return {
         pastQuestions,
