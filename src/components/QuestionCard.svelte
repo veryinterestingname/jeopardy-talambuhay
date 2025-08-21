@@ -1,22 +1,74 @@
-
 <script lang="ts">
-	import type { Question } from '$lib';
-	import { Socket } from 'socket.io-client';
-    // This component is used to display a question card when a question is selected.
-    
-	let {selectedQuestion, name, buzzed, setBuzzed, whoBuzzed, submitAnswer, showAnswer, backToBoard, guess}: {
-        selectedQuestion: Question;
-        name: string;
-        buzzed: boolean;
-        setBuzzed: (value: boolean) => void;
-        whoBuzzed: string;
-        submitAnswer: (answer: string) => void;
-        showAnswer: boolean;
-        backToBoard: () => void;
-        guess: string;
-    } = $props(); 
-    let userAnswer = $state('');
+	import { QuestionState, type Question } from '$lib';
+	import type { Socket } from 'socket.io-client';
+	// This component is used to display a question card when a question is selected.
+
+	let buzzed = $state(false);
+	// tries to set buzzed to true. otherwise sets buzzed to false.
+	let setBuzzed = (value: boolean) => {
+		value ? socket.emit('buzzed', name) : (setWhoBuzzed(''), (buzzed = false));
+	};
+
+	// let showAnswer = $state(false); // don't need this, can be derived from selectedQuestion.answered
+	let whoBuzzed = $state('');
+	let guess = $state('');
+	let setWhoBuzzed = (name: string) => (whoBuzzed = name);
+	let {
+		selectedQuestion,
+		socket,
+		name,
+		backToBoard
+	}: {
+		selectedQuestion: Question;
+		socket: typeof Socket;
+		name: string;
+		backToBoard: () => void;
+	} = $props();
+	let userAnswer = $state('');
+	let questionState = $derived(() =>
+		selectedQuestion.answered
+			? QuestionState.ShowAnswer
+			: buzzed
+				? QuestionState.Guessing
+				: QuestionState.Open
+	);
+
+	// SOCKET LISTEN EVENTS
+	socket.on('buzzed', (playerName: string) => {
+		setWhoBuzzed(playerName);
+		if (playerName) {
+			console.log(`${playerName} buzzed in!`);
+			buzzed = true;
+		} else {
+			console.log('reset buzzer');
+			buzzed = false;
+		}
+	});
+	socket.on('checkAnswer', (buzzGuess: string, socketId: string) => {
+		console.log(`Guess: ${buzzGuess} by ${socketId}`);
+		guess = buzzGuess;
+		// sent by the server for other players to see the answer
+		// TODO: we aren't supposed to move on to check answer, we should run out of time, then markAsAnswered.
+	});
+	socket.on('timeUp', () => {
+		new Audio('https://www.myinstants.com/media/sounds/times-up.mp3').play();
+	});
 	import { scale } from 'svelte/transition';
+	const isCorrect = $derived(selectedQuestion.answer.toLowerCase() === guess.toLowerCase().trim());
+	function submitAnswer(answer: string) {
+		socket.emit('checkAnswer', {
+			answer: answer.trim(),
+			question: selectedQuestion,
+			socketId: socket.id
+		});
+	}
+
+	$effect(() => {
+		// side effects, use this rune sparingly! like playing sounds.
+		if (isCorrect) {
+			new Audio('https://www.myinstants.com/media/sounds/rightanswer.mp3').play();
+		}
+	});
 </script>
 
 <div class="modal" transition:scale={{ delay: 200 }}>
@@ -27,25 +79,36 @@
 				<img class="half-screen-img" src={selectedQuestion.imgSrc} alt="question" />
 			{/if}
 		</div>
-        <!-- todo: be able to talk to the socket (emits) -->
-		{#if !buzzed}
-			<button class="buzz-button" onclick={() => (setBuzzed(true))}> BUZZ IN! </button>
-        {:else if whoBuzzed !== name}
-            <p>{whoBuzzed} is guessing...</p>
-		{:else if whoBuzzed === name}
-			<input bind:value={userAnswer} placeholder="Enter your answer" />
-			<button onclick={() => submitAnswer(userAnswer)}>Submit</button>
-		{/if}
 
-		{#if showAnswer}
+		{#if questionState() === QuestionState.Open}
+			<button class="buzz-button" onclick={() => setBuzzed(true)}> BUZZ IN! </button>
+		{:else if questionState() === QuestionState.Guessing}
+			{#if whoBuzzed !== name}
+				<p>{whoBuzzed} buzzed in first! guessing...</p>
+			{:else}
+				<input bind:value={userAnswer} placeholder="Enter your answer" />
+				<button
+					onclick={() => {
+						submitAnswer(userAnswer);
+					}}>Submit</button
+				>
+			{/if}
+		{:else if questionState() === QuestionState.ShowAnswer}
 			<div class="answer">
-				Correct Answer: {selectedQuestion.answer}<br />
-				{selectedQuestion.answer.toLowerCase() === guess.toLowerCase().trim()
-					? 'Correct!'
-					: 'Incorrect!'}
+				Correct Answer: {selectedQuestion.answer}
 			</div>
 		{/if}
-		<button class="back-btn" disabled={!selectedQuestion.answered} onclick={backToBoard}> Back to Board </button>
+		{#if guess !== '' && !isCorrect}
+			<p>{guess} is Incorrect!</p>
+		{/if}
+
+		<button
+			class="back-btn"
+			disabled={questionState() !== QuestionState.ShowAnswer}
+			onclick={backToBoard}
+		>
+			Back to Board
+		</button>
 	</div>
 </div>
 
@@ -59,10 +122,10 @@
 		background: rgba(0, 0, 0, 0.9);
 		display: grid;
 		place-items: center;
-        opacity: .9;
+		opacity: 0.9;
 	}
 
-    button {
+	button {
 		background: transparent;
 		border: none;
 		color: var(--point-color);
@@ -96,10 +159,17 @@
 		font-size: 1.5rem;
 		margin: 1rem;
 	}
+	.answer {
+		padding: 1rem 2rem;
+	}
 
 	input {
 		padding: 0.5rem;
 		font-size: 1.2rem;
 		margin: 1rem;
+	}
+	.back-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 </style>

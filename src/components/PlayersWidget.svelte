@@ -13,7 +13,7 @@
 	{#if clicked}
 		<ul>
 			{#each props.players as player}
-				<li>{player.name} - {player.score}</li>
+				<li>{player.name}: {player.score}</li>
 			{/each}
 		</ul>
 	{:else}{/if}

@@ -1,10 +1,16 @@
-// place files you want to import through the `$lib` alias in this folder.
 export type Question = {
     points: number;
     question: string;
-    answer: string;    
+    answer: string;
     answered: boolean;
     imgSrc?: string;
+    buzzers: string[];
+};
+
+export enum QuestionState {
+    Open,
+    Guessing,
+    ShowAnswer
 };
 
 export type PlayerData = {

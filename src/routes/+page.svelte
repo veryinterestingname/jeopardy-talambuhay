@@ -3,24 +3,22 @@
 	import io from 'socket.io-client';
 	import QuestionCard from '../components/QuestionCard.svelte';
 	import PlayersWidget from '../components/PlayersWidget.svelte';
-	// import { onMount } from 'svelte';
-	// import { io, Socket } from 'socket.io-client';
 
-	let {
-		data
-	}: {
-		data: { pastQuestions: Question[]; presentQuestions: Question[]; futureQuestions: Question[] };
-	} = $props();
+	let questionData = $state([] as {title: string; questions: Question[]}[]);
+	let players = $state([] as PlayerData[]);
+	let name = $state('');
+	let isNameModal = $state(true);
+	let whoControls = $state('');
 
 	const socket = io();
 
-	socket.on('join', (playerData: PlayerData) => {
-		players.push(playerData);
-		console.log(playerData.socketId + ' has joined the game');
+	socket.on('questionData', (data: { title: string; questions: Question[] }[]) => {
+		questionData = data;
+		console.log('Question data updated:', data);
 	});
 	socket.on('playerData', (data: PlayerData[]) => {
 		players = data;
-		console.log('Updated player data received:', data);
+		console.log('Updated player data updated:', data);
 	});
 	socket.on('whoControls', (socketId: string) => {
 		whoControls = socketId;
@@ -30,52 +28,9 @@
 		console.log('Question selected:', question);
 		handleSelect(question);
 	});
-	socket.on('buzzed', (playerName: string) => {
-		buzzed = true; // this sets buzzed to be true for all players
-		console.log(`${playerName} buzzed in!`);
-		setWhoBuzzed(playerName);
-		console.log(`${whoBuzzed} buzzed in!`);
-	});
-	socket.on('checkAnswer', (answer: string, socketId: string) => {
-		console.log(`Answer checked: ${answer} by ${socketId}`);
-		guess = answer;
-		// sent by the server for other players to see the answer
-		// TODO: we aren't supposed to move on to check answer, we should run out of time, then markAsAnswered.
-		markAsAnswered(answer);
-	});
-	//
-	let players = $state([] as PlayerData[]);
-	let name = $state('');
-	let isNameModal = $state(true);
 
 	// make selectedQuestion a type of optional question
 	let selectedQuestion: Question | null | undefined = $state(null);
-	let buzzed = $state(false);
-	let setBuzzed = (value: boolean) => socket.emit('buzzed', name);
-	let showAnswer = $state(false);
-	let whoBuzzed = $state('');
-	let whoControls = $state('');
-	let guess = $state('');
-	let setWhoBuzzed = (name: string) => (whoBuzzed = name);
-
-	const sortQuestions = (questions: Question[]) => questions.sort((a, b) => a.points - b.points);
-	const pastQuestions = sortQuestions(data.pastQuestions);
-	const presentQuestions = sortQuestions(data.presentQuestions);
-	const futureQuestions = sortQuestions(data.futureQuestions);
-	let categories = $state([
-		{
-			title: 'My Past',
-			questions: pastQuestions
-		},
-		{
-			title: 'My Present',
-			questions: presentQuestions
-		},
-		{
-			title: 'My Future',
-			questions: futureQuestions
-		}
-	]);
 
 	// When someone selects a question.
 	function handleSelectAndEmit(question: Question) {
@@ -89,38 +44,10 @@
 	// Followers handle select locally
 	function handleSelect(question: Question) {
 		selectedQuestion = question;
-		buzzed = false;
-		showAnswer = false;
-	}
-
-	function submitAnswer(answer: string) {
-		socket.emit('checkAnswer', {
-			answer: answer.trim(),
-			question: selectedQuestion,
-			socketId: socket.id
-		});
-	}
-
-	function markAsAnswered(answer: string) {
-		showAnswer = true;
-		if (selectedQuestion) {
-			// need to spread the selectedQuestion to update its answered state
-			selectedQuestion = { ...selectedQuestion, answered: true };
-			// update the question in categories as well
-			categories = categories.map((category) => {
-				return {
-					...category,
-					questions: category.questions.map((q) =>
-						q.question === selectedQuestion?.question ? selectedQuestion! : q
-					)
-				};
-			});
-		}
 	}
 	function backToBoard() {
 		selectedQuestion = null;
-		buzzed = false;
-		showAnswer = false;
+		socket.emit('selectQuestion', null);
 	}
 </script>
 
@@ -141,7 +68,7 @@
 {/if}
 
 <div class="board {isNameModal ? 'blurred' : ''}">
-	{#each categories as category}
+	{#each questionData as category}
 		<div>
 			<h2 class="category">{category.title.toUpperCase()}</h2>
 			{#each category.questions as question}
@@ -163,17 +90,7 @@
 </div>
 
 {#if selectedQuestion}
-	<QuestionCard
-		{selectedQuestion}
-		{name}
-		{showAnswer}
-		{buzzed}
-		{setBuzzed}
-		{submitAnswer}
-		{whoBuzzed}
-		{backToBoard}
-		{guess}
-	/>
+	<QuestionCard {selectedQuestion} {name} {socket} {backToBoard} />
 {/if}
 
 <style>
