@@ -8,7 +8,11 @@ const webSocketServer = {
 	name: "webSocketServer",
 	configureServer(server: ViteDevServer) { // this is from vite plugin system 
 		if (!server.httpServer) return; // ensure server is running
-		const io = new Server(server.httpServer);
+		const io = new Server(server.httpServer, {
+			connectionStateRecovery: {
+				maxDisconnectionDuration: 2 * 60 * 1000, // 2 minutes
+			}
+		});
 		addSocketHandlers(io);
 	}
 };

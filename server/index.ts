@@ -18,7 +18,14 @@ const addSocketHandlers = (io: Server) => {
       if (state.whoControls === null) {
         state.whoControls = socket.id; // the first player who joins becomes the controller
       }
+      // disallow duplicate names
+      if (state.playerData.find(player => player.name === joinData.name)) {
+        console.log('Duplicate name attempted:', joinData.name);
+        socket.emit('errorJoin', 'duplicateName');
+        return;
+      }
       state.playerData.push({ name: joinData.name, socketId: socket.id, score: 0 });
+      socket.emit('playerJoined');
       // need to emit to all clients the new player data
       io.emit('playerData', state.playerData);
       // emit the current state only to the newly joined player
@@ -64,7 +71,7 @@ const addSocketHandlers = (io: Server) => {
         }
         clearInterval(state.intervalId!);
         state.intervalId = null;
-        
+
         state.whoBuzzed = name;
         io.emit('buzzed', state.whoBuzzed); // Broadcast the buzz event to all clients
       }
@@ -144,7 +151,11 @@ const runServer = () => {
   const port = 3000
   const app = express()
   const server = createServer(app)
-  const io = new Server(server)
+  const io = new Server(server, {
+    connectionStateRecovery: {
+      maxDisconnectionDuration: 2 * 60 * 1000, // 2 minutes
+    }
+  })
   // SvelteKit should handle everything else using Express middleware
   // https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
   addSocketHandlers(io)

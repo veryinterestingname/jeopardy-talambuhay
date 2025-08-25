@@ -8,10 +8,27 @@
 	let players = $state([] as PlayerData[]);
 	let name = $state('');
 	let isNameModal = $state(true);
+	let submitName = $state(false);
 	let whoControls = $state('');
+	let joinError = $state(false);
 
 	const socket = io();
-
+	
+	// SOCKET LISTEN EVENTS
+	socket.on('errorJoin', (message: string) => {
+		if (message === 'duplicateName') {
+			submitName = false;
+			joinError = true;
+			console.log('Name already taken');
+		} else {
+		}
+	});
+	socket.on('playerJoined', () => {
+		
+		isNameModal = false;
+		joinError = false;
+		submitName = false;
+	});
 	socket.on('questionData', (data: { title: string; questions: Question[] }[]) => {
 		questionData = data;
 		console.log('Question data updated:', data);
@@ -25,7 +42,6 @@
 		console.log('Current controller:', socketId);
 	});
 	socket.on('selectQuestion', (question: Question) => {
-		console.log('Question selected:', question);
 		handleSelect(question);
 	});
 
@@ -54,16 +70,27 @@
 <PlayersWidget {players} />
 {#if isNameModal}
 	<div class="name-entry">
-		<h2>Enter your name to join the game:</h2>
+		<h2>
+			{#if joinError}Name already taken. Please choose a different name:
+			{:else}Enter your name to join the game:
+			{/if}
+		</h2>
+
 		<input bind:value={name} placeholder="Your name" />
 		<button
 			onclick={() => {
 				if (name.trim()) {
 					socket.emit('join', { name: name.trim(), socketId: socket.id, score: 0 });
-					isNameModal = false;
+					submitName = true;
 				}
-			}}>Join Game</button
+			}}
 		>
+			{#if submitName}
+				<img src="/loading.svg" alt="loading" width=32 height=32 />
+			{:else}
+				Join Game
+			{/if}
+		</button>
 	</div>
 {/if}
 
@@ -114,8 +141,8 @@
 	}
 
 	:global(input:active, input:focus-visible) {
-		  box-shadow: 2px 2px 15px var(--point-color) inset;
-		  outline: 0;
+		box-shadow: 2px 2px 15px var(--point-color) inset;
+		outline: 0;
 	}
 	:global(button) {
 		background: transparent;
