@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { QuestionState, type Question } from '$lib';
 	import type { Socket } from 'socket.io-client';
+	import Tooltip from './Tooltip.svelte';
 	// This component is used to display a question card when a question is selected.
 
 	let buzzed = $state(false);
@@ -81,7 +82,16 @@
 		</div>
 
 		{#if questionState() === QuestionState.Open}
-			<button class="buzz-button" onclick={() => setBuzzed(true)}> BUZZ IN! </button>
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<Tooltip title={selectedQuestion.buzzers.includes(name) ? 'You have already buzzed in!' : ''}>
+				<button
+					disabled={selectedQuestion.buzzers.includes(name)}
+					class="buzz-button"
+					onclick={() => setBuzzed(true)}
+				>
+					BUZZ IN!
+				</button>
+			</Tooltip>
 		{:else if questionState() === QuestionState.Guessing}
 			{#if whoBuzzed !== name}
 				<p>{whoBuzzed} buzzed in first! guessing...</p>
@@ -113,6 +123,10 @@
 </div>
 
 <style>
+	.question {
+		font-size: 1.5rem;
+		margin-bottom: 1rem;
+	}
 	.modal {
 		position: fixed;
 		top: 0;
@@ -125,12 +139,6 @@
 		opacity: 0.9;
 	}
 
-	button {
-		background: transparent;
-		border: none;
-		color: var(--point-color);
-		cursor: pointer;
-	}
 	.modal-content {
 		background: var(--theme-color);
 		color: white;
@@ -138,14 +146,14 @@
 		border-radius: 10px;
 		max-width: 800px;
 		text-align: center;
+		overflow: scroll; 
 	}
 
 	:global(.half-screen-img) {
-		/*you need global because this css needs to be seen in the static html*/
-		max-width: 100%; /* Prevents overflow on small screens, 100% of the modal-content */
-		height: auto; /* Maintains aspect ratio */
-		max-height: 80vh;
-		display: block; /* Removes inline spacing */
+		max-width: 100%;
+		max-height: 70%; /* TODO: this doesn't work */
+		height: auto;
+		display: block;
 		object-fit: contain; /* Ensures the whole image is visible */
 	}
 
@@ -159,15 +167,11 @@
 		font-size: 1.5rem;
 		margin: 1rem;
 	}
-	.answer {
-		padding: 1rem 2rem;
+	.buzz-button:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 
-	input {
-		padding: 0.5rem;
-		font-size: 1.2rem;
-		margin: 1rem;
-	}
 	.back-btn:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;

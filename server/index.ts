@@ -58,11 +58,14 @@ const addSocketHandlers = (io: Server) => {
       if (state.whoBuzzed !== null) {
         console.log('A player has already buzzed:', state.whoBuzzed);
       } else {
-
+        if (state.selectedQuestion?.buzzers.includes(name)) {
+          console.log('Player has already buzzed in:', name);
+          return; // Ignore if the player has already buzzed in
+        }
         clearInterval(state.intervalId!);
         state.intervalId = null;
-
-        state.whoBuzzed = name; // Set the player who buzzed
+        
+        state.whoBuzzed = name;
         io.emit('buzzed', state.whoBuzzed); // Broadcast the buzz event to all clients
       }
     });
@@ -82,7 +85,6 @@ const addSocketHandlers = (io: Server) => {
 
           // also emit question as answered
           markAsAnswered();
-          io.emit('selectQuestion', state.selectedQuestion);
           io.emit('questionData', state.categories);
         }
         else {
@@ -96,6 +98,11 @@ const addSocketHandlers = (io: Server) => {
           state.whoBuzzed = null;
           io.emit('buzzed', null);
         }
+        state.selectedQuestion = {
+          ...state.selectedQuestion!,
+          buzzers: [...(state.selectedQuestion?.buzzers || []), player.name]
+        };
+        io.emit('selectQuestion', state.selectedQuestion);
         console.log(`Updated score for ${player.name}: ${player.score}`);
         io.emit('playerData', state.playerData);
       }

@@ -4,7 +4,7 @@
 	import QuestionCard from '../components/QuestionCard.svelte';
 	import PlayersWidget from '../components/PlayersWidget.svelte';
 
-	let questionData = $state([] as {title: string; questions: Question[]}[]);
+	let questionData = $state([] as { title: string; questions: Question[] }[]);
 	let players = $state([] as PlayerData[]);
 	let name = $state('');
 	let isNameModal = $state(true);
@@ -103,6 +103,27 @@
 		background-color: black;
 	}
 
+	:global(input) {
+		padding: 0.5rem;
+		font-size: 1.2rem;
+		margin: 1rem;
+		background-color: transparent;
+		border: 3px solid var(--point-color);
+		border-radius: 5px;
+		color: white;
+	}
+
+	:global(input:active, input:focus-visible) {
+		  box-shadow: 2px 2px 15px var(--point-color) inset;
+		  outline: 0;
+	}
+	:global(button) {
+		background: transparent;
+		border: none;
+		color: var(--point-color);
+		cursor: pointer;
+	}
+
 	.blurred {
 		pointer-events: none;
 		user-select: none;
@@ -164,11 +185,5 @@
 	.unselected {
 		background-color: var(--theme-color);
 		color: var(--point-color);
-	}
-
-	input {
-		padding: 0.5rem;
-		font-size: 1.2rem;
-		margin: 1rem;
 	}
 </style>
