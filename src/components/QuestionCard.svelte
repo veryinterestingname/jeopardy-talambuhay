@@ -151,7 +151,7 @@
 
 	:global(.half-screen-img) {
 		max-width: 100%;
-		max-height: 70%; /* TODO: this doesn't work */
+		max-height: 70vh;
 		height: auto;
 		display: block;
 		object-fit: contain; /* Ensures the whole image is visible */

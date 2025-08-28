@@ -1,4 +1,4 @@
-# sv
+# Jeopardy Talambuhay
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
@@ -30,7 +30,9 @@ To create a production version of your app:
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+~~You can preview the production build with `npm run preview`.~~
+Because we use a custom node server adapter, you can run the production server with `npm run start`.
+You need node version 23 or higher in order to run typescript files directly. 
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
 
