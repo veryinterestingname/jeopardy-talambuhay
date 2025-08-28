@@ -13,7 +13,7 @@
 	let joinError = $state(false);
 
 	const socket = io();
-	
+
 	// SOCKET LISTEN EVENTS
 	socket.on('errorJoin', (message: string) => {
 		if (message === 'duplicateName') {

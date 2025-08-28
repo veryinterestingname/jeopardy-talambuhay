@@ -2,7 +2,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig, type ViteDevServer } from 'vite';
 // server code for websockets here
 import { Server } from 'socket.io'; // https://www.youtube.com/watch?v=mAcKzdW5fR8 
-import { addSocketHandlers } from './server/index.ts';
+import { addSocketHandlers } from './server/socketHandlers.ts';
 
 const webSocketServer = {
 	name: "webSocketServer",
