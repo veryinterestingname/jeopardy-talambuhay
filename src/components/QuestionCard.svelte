@@ -4,16 +4,15 @@
 	import Tooltip from './Tooltip.svelte';
 	// This component is used to display a question card when a question is selected.
 
+	// whether or not SOMEONE has buzzed in.
 	let buzzed = $state(false);
 	// tries to set buzzed to true. otherwise sets buzzed to false.
 	let setBuzzed = (value: boolean) => {
-		value ? socket.emit('buzzed', name) : (setWhoBuzzed(''), (buzzed = false));
+		value ? socket.emit('buzzed', name) : ((whoBuzzed = ''), (buzzed = false));
 	};
 
-	// let showAnswer = $state(false); // don't need this, can be derived from selectedQuestion.answered
 	let whoBuzzed = $state('');
 	let guess = $state('');
-	let setWhoBuzzed = (name: string) => (whoBuzzed = name);
 	let {
 		selectedQuestion,
 		socket,
@@ -33,30 +32,100 @@
 				? QuestionState.Guessing
 				: QuestionState.Open
 	);
+	let secondsLeft = $state(0);
+	let isAnswering = $derived(whoBuzzed === name && questionState() === QuestionState.Guessing);
+	let answeringInterval = $state<NodeJS.Timeout>();
+	let activeQuestionKey = $state<string>(); // to track which question the timer belongs to
+	const setTimer = (seconds: number) => {
+		activeQuestionKey = selectedQuestion.question; // set the active question key
+		isAnswering = true;
+		secondsLeft = seconds;
+		answeringInterval = setInterval(() => {
+			console.log(
+				'Seconds left for',
+				name,
+				':',
+				secondsLeft,
+				'for question:',
+				selectedQuestion.question
+			);
+			if (secondsLeft > 0) {
+				secondsLeft -= 1;
+			} else {
+				// time's up, move to show answer
+				secondsLeft = 0;
+				isAnswering = false;
+				clearInterval(answeringInterval); // stop the timer
+				console.log(answeringInterval, 'cleared');
+				answeringInterval = undefined;
+				// only submit if this timer belongs to the currently active question
+				if (activeQuestionKey === selectedQuestion.question) {
+					submitAnswer(userAnswer);
+				} else {
+					console.log('Ignored stale timer for:', activeQuestionKey);
+				}
+			}
+		}, 1000);
+	};
 
 	// SOCKET LISTEN EVENTS
-	socket.on('buzzed', (playerName: string) => {
-		setWhoBuzzed(playerName);
-		if (playerName) {
-			console.log(`${playerName} buzzed in!`);
-			buzzed = true;
-		} else {
-			console.log('reset buzzer');
-			buzzed = false;
+	onMount(() => {
+		const handleBuzzed = (playerName: string) => {
+			whoBuzzed = playerName;
+			if (playerName) {
+				console.log(`${playerName} buzzed in!`);
+				buzzed = true;
+				if (playerName === name) {
+					setTimer(5); // start timer only for the player who buzzed in
+				}
+			} else {
+				console.log('reset buzzer');
+				buzzed = false;
+			}
 		}
+
+		const handleCheckAnswer = (buzzGuess: string, socketId: string) => {
+			console.log(
+				`Guess: ${buzzGuess} for question: ${selectedQuestion.question} by ${socketId}`
+			);
+			guess = buzzGuess;
+		}
+
+		const handleTimeUp = () => {
+			new Audio('https://www.myinstants.com/media/sounds/times-up.mp3').play();
+		}
+
+		socket.on('buzzed', handleBuzzed);
+		socket.on('checkAnswer', handleCheckAnswer);
+		socket.on('timeUp', handleTimeUp);
+
+		onDestroy(() => {
+			socket.off('buzzed', handleBuzzed);
+			socket.off('checkAnswer', handleCheckAnswer);
+			socket.off('timeUp', handleTimeUp);
+
+			if (answeringInterval) {
+				clearInterval(answeringInterval);
+				answeringInterval = undefined;
+			}
+		});
 	});
-	socket.on('checkAnswer', (buzzGuess: string, socketId: string) => {
-		console.log(`Guess: ${buzzGuess} by ${socketId}`);
-		guess = buzzGuess;
-		// sent by the server for other players to see the answer
-		// TODO: we aren't supposed to move on to check answer, we should run out of time, then markAsAnswered.
-	});
-	socket.on('timeUp', () => {
-		new Audio('https://www.myinstants.com/media/sounds/times-up.mp3').play();
-	});
+
+
 	import { scale } from 'svelte/transition';
+	import { onDestroy, onMount } from 'svelte';
 	const isCorrect = $derived(selectedQuestion.answer.toLowerCase() === guess.toLowerCase().trim());
 	function submitAnswer(answer: string) {
+		clearInterval(answeringInterval); // stop the timer
+		console.log(answer, 'submitted by', name);
+		answeringInterval = undefined;
+
+		// // prevent submitting for an old question
+		if (activeQuestionKey !== selectedQuestion.question) {
+			console.log('hmm?');
+			console.log('Ignored stale submit for:', activeQuestionKey);
+			return;
+		}
 		socket.emit('checkAnswer', {
 			answer: answer.trim(),
 			question: selectedQuestion,
@@ -70,6 +139,7 @@
 			new Audio('https://www.myinstants.com/media/sounds/rightanswer.mp3').play();
 		}
 	});
+	
 </script>
 
 <div class="modal" transition:scale={{ delay: 200 }}>
@@ -96,6 +166,9 @@
 			{#if whoBuzzed !== name}
 				<p>{whoBuzzed} buzzed in first! guessing...</p>
 			{:else}
+				{#if isAnswering}
+					<p>You have {secondsLeft} seconds to answer!</p>
+				{/if}
 				<input bind:value={userAnswer} placeholder="Enter your answer" />
 				<button
 					onclick={() => {
@@ -146,7 +219,7 @@
 		border-radius: 10px;
 		max-width: 800px;
 		text-align: center;
-		overflow: scroll; 
+		overflow: scroll;
 	}
 
 	:global(.half-screen-img) {

@@ -144,7 +144,7 @@
 </div>
 
 {#if selectedQuestion}
-	<QuestionCard {selectedQuestion} {name} {socket} {backToBoard} />
+		<QuestionCard {selectedQuestion} {name} {socket} {backToBoard} />
 {/if}
 
 <style>
@@ -184,7 +184,8 @@
 		filter: blur(4px);
 		opacity: 0.6;
 	}
-	.name-entry, .game-over {
+	.name-entry,
+	.game-over {
 		text-align: center;
 		margin: 2rem;
 		color: white;

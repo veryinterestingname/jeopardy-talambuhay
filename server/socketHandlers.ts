@@ -55,7 +55,7 @@ const addSocketHandlers = (io: Server) => {
                 startTimer(io);
             } else if (state.categories.every((category) => category.questions.every((q) => q.answered))) {
                 io.emit('gameOver');
-                    console.log("and the gae is over")
+                console.log("and the gae is over")
                 io.emit('whoControls', state.playerData[0].socketId); // reset controller to first player
                 state.whoControls = state.playerData[0].socketId;
             }
@@ -71,6 +71,7 @@ const addSocketHandlers = (io: Server) => {
                     console.log('Player has already buzzed in:', name);
                     return; // Ignore if the player has already buzzed in
                 }
+                // STOPS TIMER
                 clearInterval(state.intervalId!);
                 state.intervalId = null;
 
@@ -85,6 +86,9 @@ const addSocketHandlers = (io: Server) => {
             // broadcast guess to all clients 
             state.whoBuzzed = null; // Reset who buzzed after checking the answer
             io.emit('checkAnswer', answer, socketId);
+            // STOPS COUNTDOWN TIMER WHEN ANSWER IS CHECKED
+            clearInterval(state.intervalId!);
+            state.intervalId = null;
             // Update player score based on the answer
             const player = state.playerData.find(player => player.socketId === socketId);
             if (player) {
@@ -95,15 +99,16 @@ const addSocketHandlers = (io: Server) => {
                     // also emit question as answered
                     markAsAnswered();
                     io.emit('questionData', state.categories);
+
                 }
                 else {
                     console.log(`Incorrect answer from ${player.name}, ${socketId}. Deducting points.`);
                     player.score -= question.points; // Deduct points for incorrect answer
-                    // open up the question again for others to answer
-                    startTimer(io);
+                    // RESTARTS TIMER IF INCORRECT
                     if (state.timeLeft <= 2) {
                         state.timeLeft += 1;
                     }
+                    startTimer(io);
                     state.whoBuzzed = null;
                     io.emit('buzzed', null);
                 }
