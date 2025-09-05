@@ -11,6 +11,13 @@
 	let submitName = $state(false);
 	let whoControls = $state('');
 	let joinError = $state(false);
+	let isGameOver = $state(false);
+	let winnerNames = $derived.by(() => {
+		if (players.length === 0) return '';
+		const maxScore = Math.max(...players.map((p) => p.score));
+		const winners = players.filter((p) => p.score === maxScore).map((p) => p.name);
+		return winners.join(', ');
+	});
 
 	const socket = io();
 
@@ -24,7 +31,6 @@
 		}
 	});
 	socket.on('playerJoined', () => {
-		
 		isNameModal = false;
 		joinError = false;
 		submitName = false;
@@ -43,6 +49,14 @@
 	});
 	socket.on('selectQuestion', (question: Question) => {
 		handleSelect(question);
+	});
+	socket.on('gameOver', () => {
+		// show modal for the winner and reset the game
+		isGameOver = true;
+	});
+	socket.on('resetGame', () => {
+		isGameOver = false;
+		selectedQuestion = null;
 	});
 
 	// make selectedQuestion a type of optional question
@@ -86,7 +100,7 @@
 			}}
 		>
 			{#if submitName}
-				<img src="/loading.svg" alt="loading" width=32 height=32 />
+				<img src="/loading.svg" alt="loading" width="32" height="32" />
 			{:else}
 				Join Game
 			{/if}
@@ -94,7 +108,20 @@
 	</div>
 {/if}
 
-<div class="board {isNameModal ? 'blurred' : ''}">
+{#if isGameOver}
+	<div class="game-over">
+		<h2>Game Over</h2>
+		<p>The winner is: {winnerNames}</p>
+		{#if whoControls === socket.id}<button
+				onclick={() => {
+					socket.emit('resetGame');
+				}}>Play Again</button
+			>
+		{/if}
+	</div>
+{/if}
+
+<div class="board {isNameModal || isGameOver ? 'blurred' : ''}">
 	{#each questionData as category}
 		<div>
 			<h2 class="category">{category.title.toUpperCase()}</h2>
@@ -157,7 +184,7 @@
 		filter: blur(4px);
 		opacity: 0.6;
 	}
-	.name-entry {
+	.name-entry, .game-over {
 		text-align: center;
 		margin: 2rem;
 		color: white;

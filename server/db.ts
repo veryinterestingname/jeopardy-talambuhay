@@ -9,24 +9,24 @@ const pastQuestions: Question[] = sortQuestions([
         question: 'What US state is the Land of Lincoln?',
         answer: 'Illinois',
     },
-    {
-        points: 200,
-        question:
-            'Which country\'s flag is this?',
-        imgSrc: "https://cdn.britannica.com/34/4034-050-91EE1BCF/Flag-Myanmar.jpg",
-        answer: 'Myanmar',
-    },
-    {
-        points: 300,
-        question:
-            'What Ivy League school has the highest Native American enrollment (a whoppping 1%)?',
-        answer: 'Dartmouth',
-    },
-    {
-        points: 400,
-        question: 'Who wrote the Critique of Pure Reason?',
-        answer: 'Immanuel Kant',
-    }
+    // {
+    //     points: 200,
+    //     question:
+    //         'Which country\'s flag is this?',
+    //     imgSrc: "https://cdn.britannica.com/34/4034-050-91EE1BCF/Flag-Myanmar.jpg",
+    //     answer: 'Myanmar',
+    // },
+    // {
+    //     points: 300,
+    //     question:
+    //         'What Ivy League school has the highest Native American enrollment (a whoppping 1%)?',
+    //     answer: 'Dartmouth',
+    // },
+    // {
+    //     points: 400,
+    //     question: 'Who wrote the Critique of Pure Reason?',
+    //     answer: 'Immanuel Kant',
+    // }
 ]);
 
 const presentQuestions: Question[] =
@@ -38,27 +38,27 @@ const presentQuestions: Question[] =
             imgSrc: 'https://madera.objects.liquidweb.services/photos/16842-half-dome-closeup-from-glacier-point-steve-montalto-hmi-Rectangle-600x400.jpg',
             answer: 'Granite',
         },
-        {
-            points: 100,
-            question:
-                'What is this Cafe called?',
-            imgSrc: 'https://lh3.googleusercontent.com/p/AF1QipNsmB0ugJeJxYVrBKpRkNkyiEa6cKLamFZ4r0M=s1360-w1360-h1020',
-            answer: 'Chaotic Good',
-        },
-        {
-            points: 300,
-            question: 'What programming language is the below code?',
-            imgSrc: '/programming_language.png',
-            answer: 'Javascript',
-        },
-        {
-            points: 400,
-            question:
-                'Who painted this?',
-            imgSrc:
-                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjb1tCOwOdOeYcp5iflCvvW95qCqpmNUo-TMIt3ndxzsxzmgmH18iClIIQLPO48ojPg5Rts2AUm9rZBeVPcjnjrjGaLSzCwbipQotY4EhOk3tUoHJjJyZjTqfY5s9MZ5eSkGrrqmom4JXUdHEqE-Ts8E9i-SuFf9xEukJcFBs5NuOhe6ANdODMFYzyV_Q/s16000/Unfinished.jpg",
-            answer: 'Keith Haring',
-        }
+        // {
+        //     points: 100,
+        //     question:
+        //         'What is this Cafe called?',
+        //     imgSrc: 'https://lh3.googleusercontent.com/p/AF1QipNsmB0ugJeJxYVrBKpRkNkyiEa6cKLamFZ4r0M=s1360-w1360-h1020',
+        //     answer: 'Chaotic Good',
+        // },
+        // {
+        //     points: 300,
+        //     question: 'What programming language is the below code?',
+        //     imgSrc: '/programming_language.png',
+        //     answer: 'Javascript',
+        // },
+        // {
+        //     points: 400,
+        //     question:
+        //         'Who painted this?',
+        //     imgSrc:
+        //         "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjb1tCOwOdOeYcp5iflCvvW95qCqpmNUo-TMIt3ndxzsxzmgmH18iClIIQLPO48ojPg5Rts2AUm9rZBeVPcjnjrjGaLSzCwbipQotY4EhOk3tUoHJjJyZjTqfY5s9MZ5eSkGrrqmom4JXUdHEqE-Ts8E9i-SuFf9xEukJcFBs5NuOhe6ANdODMFYzyV_Q/s16000/Unfinished.jpg",
+        //     answer: 'Keith Haring',
+        // }
     ]);
 const futureQuestions: Question[] = sortQuestions([
     {
