@@ -6,15 +6,15 @@ const sortQuestions = (questions: { points: number; question: string; answer: st
 const pastQuestions: Question[] = sortQuestions([
     {
         points: 100,
-        question: 'What US state is the Land of Lincoln?',
-        answer: 'Illinois',
+        question: 'What US state was the third to join the union?',
+        answer: 'New Jersey',
     },
     {
         points: 200,
         question:
             'Which country\'s flag is this?',
-        imgSrc: "https://cdn.britannica.com/34/4034-050-91EE1BCF/Flag-Myanmar.jpg",
-        answer: 'Myanmar',
+        imgSrc: "https://https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg.britannica.com/34/4034-050-91EE1BCF/Flag-Myanmar.jpg",
+        answer: 'United States',
     },
     {
         points: 300,
