@@ -13,19 +13,19 @@ const pastQuestions: Question[] = sortQuestions([
         points: 200,
         question:
             'Which country\'s flag is this?',
-        imgSrc: "https://https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg.britannica.com/34/4034-050-91EE1BCF/Flag-Myanmar.jpg",
+        imgSrc: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg",
         answer: 'United States',
     },
     {
         points: 300,
         question:
-            'What Ivy League school has the highest Native American enrollment (a whoppping 1%)?',
-        answer: 'Dartmouth',
+            'What Ivy League school was founded two days before the civil war?',
+        answer: 'MIT',
     },
     {
         points: 400,
-        question: 'Who wrote the Critique of Pure Reason?',
-        answer: 'Immanuel Kant',
+        question: 'Who wrote War and Peace?',
+        answer: 'Leo Tolstoy',
     }
 ]);
 
