@@ -35,8 +35,8 @@ const presentQuestions: Question[] =
             points: 200,
             question:
                 'What kind of rock is this?',
-            imgSrc: 'https://madera.objects.liquidweb.services/photos/16842-half-dome-closeup-from-glacier-point-steve-montalto-hmi-Rectangle-600x400.jpg',
-            answer: 'Granite',
+            imgSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/NY-Central-Park-Rock-7333.jpg/2560px-NY-Central-Park-Rock-7333.jpg',
+            answer: 'Manhattan Schist',
         },
         {
             points: 100,
@@ -47,9 +47,9 @@ const presentQuestions: Question[] =
         },
         {
             points: 300,
-            question: 'What programming language is the below code?',
-            imgSrc: '/programming_language.png',
-            answer: 'Javascript',
+            question: 'What file type is the below code?',
+            imgSrc: '/codingLanguagePic.png',
+            answer: 'Typescript',
         },
         {
             points: 400,
