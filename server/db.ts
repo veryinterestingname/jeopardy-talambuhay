@@ -66,7 +66,7 @@ const futureQuestions: Question[] = sortQuestions([
         question:
             'This country is home to the Rockies, which are a mountain range',
         answer: 'United States',
-    }
+    },
     {
         points: 200,
         question:
