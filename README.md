@@ -1,5 +1,13 @@
 # Jeopardy Talambuhay
 
+Questions for presentation:
+-category 1 100, i live in new jersey
+-category 1 400, leo tolstoy wrote war and peace, my favorite book
+-category 2 200, this rock is in central park and i go there sometimes
+-category 2 100, beethoven composed it and I play piano pieces including those by beethoven
+-category 3 400, I have a pet mini goldendoodle
+
+
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
 ## Creating this project 
