@@ -41,9 +41,9 @@ const presentQuestions: Question[] =
         {
             points: 100,
             question:
-                'What is this Cafe called?',
-            imgSrc: 'https://lh3.googleusercontent.com/p/AF1QipNsmB0ugJeJxYVrBKpRkNkyiEa6cKLamFZ4r0M=s1360-w1360-h1020',
-            answer: 'Chaotic Good',
+                'Who composed this?',
+            imgSrc: 'https://miro.medium.com/v2/resize:fit:1200/1*ygL2uafx16Xy2mlEOJ5KUg.jpeg',
+            answer: 'Beethoven',
         },
         {
             points: 300,
@@ -76,17 +76,17 @@ const futureQuestions: Question[] = sortQuestions([
     },
     {
         points: 300,
-        question: 'What file type is the below code?',
-        imgSrc: '/codingLanguagePic.png',
-        answer: 'Typescript',
+        question: 'What is this instrument?',
+        imgSrc: 'https://media.gettyimages.com/id/175169304/photo/aint-it-grand.jpg?s=612x612&w=gi&k=20&c=HWx78jjCcvSlEsAxlwnSTRz-zcjW9jQtgGPB417cyXg%3D',
+        answer: 'Piano',
     },
     {
         points: 400,
         question:
-            'Who painted this?',
+            'What dog breed is this?',
         imgSrc:
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/960px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
-        answer: 'Leonardo Da Vinci',
+            "https://www.teddybeargoldendoodles.com/wp-content/smush-webp/2022/04/IMG_5308-scaled.jpg.webp",
+        answer: 'Mini Goldendoodle',
     }
 ]);
 
